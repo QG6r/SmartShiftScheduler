@@ -46,7 +46,7 @@ SmartShiftScheduler/
 
 ### Prerequisites
 
-- [.NET 7.0+](https://dotnet.microsoft.com/download)
+- [.NET 8.0+](https://dotnet.microsoft.com/download)
 
 ### Installation
 
