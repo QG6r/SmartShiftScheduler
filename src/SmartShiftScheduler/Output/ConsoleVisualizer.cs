@@ -2,10 +2,10 @@ namespace SmartShiftScheduler;
 
 public static class ConsoleVisualizer
 {
-    private const int DayWidth = 10;
-    private const int ShiftWidth = 9;
+    private const int DayWidth = 11;
+    private const int ShiftWidth = 11;
     private const int EmployeesWidth = 30;
-    private const int FillWidth = 5;
+    private const int FillWidth = 6;
 
     public static void PrintWelcomeMessage()
     {
@@ -42,15 +42,15 @@ public static class ConsoleVisualizer
 
                 string employees = people.Count == 0 ? "-" : string.Join(", ", people);
                 string fill = $"{people.Count}/{demand.Required}";
-                bool short_ = people.Count < demand.Required;
+                bool isShort = people.Count < demand.Required;
 
-                if (short_) Console.ForegroundColor = ConsoleColor.Red;
+                if (isShort) Console.ForegroundColor = ConsoleColor.Red;
 
                 Console.WriteLine(
                     $"│ {demand.Day.ToString().PadRight(DayWidth - 2)} │ {demand.Shift.ToString().PadRight(ShiftWidth - 2)} │ " +
                     $"{employees.PadRight(EmployeesWidth - 2)} │ {fill.PadRight(FillWidth - 2)} │");
 
-                if (short_) Console.ResetColor();
+                if (isShort) Console.ResetColor();
             }
 
             Console.WriteLine($"└{Bar(DayWidth)}┴{Bar(ShiftWidth)}┴{Bar(EmployeesWidth)}┴{Bar(FillWidth)}┘\n");
