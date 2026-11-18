@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test-demo:
+    name: Build, test and run the demo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore -c Release
+
+      - name: Test
+        run: dotnet test --no-build -c Release --verbosity normal
+
+      - name: Run the scheduler on the sample survey
+        run: |
+          dotnet run --no-build -c Release --project src/SmartShiftScheduler -- data/responses.csv | tee demo-output.txt
+          grep -q "Responses read from data/responses.csv: 16" demo-output.txt
+          grep -q "SCHEDULE QUALITY ANALYSIS" demo-output.txt
+          grep -q "Rule violations: 0" demo-output.txt
+
+      - name: Missing file gives a clear error
+        run: |
+          if dotnet run --no-build -c Release --project src/SmartShiftScheduler -- does-not-exist.csv 2> err.txt; then
+            echo "expected a non-zero exit code"; exit 1
+          fi
+          grep -q "Responses file not found" err.txt
+
+      - name: Upload demo output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-output
+          path: demo-output.txt
